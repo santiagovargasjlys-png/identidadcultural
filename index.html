@@ -1,99 +1,208 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jardín de Santa Inés — Puebla</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --parchment: #f4ebd8;
-      --parchment-light: #faf5ea;
-      --burgundy: #6b1d1d;
-      --burgundy-dark: #4a1010;
-      --gold: #a67c37;
-      --gold-light: #d4af6a;
-      --espresso: #2c1e16;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video con Fondo de Periódico</title>
+    <style>
+        /* Configuración general */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    body {
-      background-color: var(--parchment);
-      color: var(--espresso);
-      font-family: 'Lora', Georgia, serif;
-      background-image: 
-        radial-gradient(circle at 20% 20%, rgba(166, 124, 55, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(107, 29, 29, 0.07) 0%, transparent 50%);
-    }
+        body {
+            background-color: #1a1917; /* Fondo oscuro tono papel viejo */
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* Evita barras de desplazamiento */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Georgia', serif;
+            position: relative;
+        }
 
-    h1, h2, h3, .font-cinzel {
-      font-family: 'Cinzel', Georgia, serif;
-    }
+        /* Contenedor del collage de fondo */
+        .newspaper-background {
+            position: fixed;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 15px;
+            z-index: 1;
+            pointer-events: none; /* Permite hacer clic en el video sin estorbos */
+            opacity: 0.35; /* Oscurece el fondo para resaltar el video */
+            filter: grayscale(100%) contrast(120%); /* Efecto blanco y negro de prensa */
+        }
 
-    .baroque-card {
-      background-color: var(--parchment-light);
-      border: 2px solid var(--gold);
-      box-shadow: 0 8px 24px rgba(44, 30, 22, 0.08), inset 0 0 0 4px var(--parchment-light), inset 0 0 0 5px rgba(166, 124, 55, 0.4);
-    }
+        /* Cada recorte de periódico */
+        .clipping {
+            background-color: #e8e4d9;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #b5afa2;
+        }
 
-    .burgundy-ribbon {
-      background: linear-gradient(135deg, var(--burgundy) 0%, var(--burgundy-dark) 100%);
-      color: #fdf6e7;
-      border: 1.5px solid var(--gold-light);
-      box-shadow: 0 4px 10px rgba(74, 16, 16, 0.25);
-    }
-  </style>
+        /* Variaciones de rotación para efecto collage desordenado */
+        .clipping:nth-child(odd) {
+            transform: rotate(-2deg) scale(1.03);
+        }
+
+        .clipping:nth-child(even) {
+            transform: rotate(2.5deg) scale(1.02);
+        }
+
+        .clipping:nth-child(3n) {
+            transform: rotate(-1.5deg) scale(1.05);
+        }
+
+        /* Estilo de texto simulando periódico dentro de los recortes */
+        .clipping h3 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            border-bottom: 2px solid #222;
+            padding-bottom: 4px;
+            margin-bottom: 6px;
+            color: #111;
+            letter-spacing: 0.5px;
+        }
+
+        .clipping p {
+            font-size: 0.7rem;
+            line-height: 1.3;
+            color: #333;
+            text-align: justify;
+            column-count: 2;
+            column-gap: 8px;
+        }
+
+        .clipping img {
+            width: 100%;
+            height: 90px;
+            object-fit: cover;
+            margin-bottom: 6px;
+            border: 1px solid #444;
+        }
+
+        /* Contenedor principal del video (al frente y centrado) */
+        .video-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 850px;
+            aspect-ratio: 16 / 9; /* Proporción panorámica estándar */
+            background: #000;
+            border-radius: 8px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+        }
+
+        /* El reproductor de video o iframe */
+        .video-wrapper video,
+        .video-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* Ajuste para celulares */
+        @media (max-width: 768px) {
+            .newspaper-background {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(4, 1fr);
+            }
+            .video-wrapper {
+                width: 95%;
+            }
+        }
+    </style>
 </head>
-<body class="antialiased selection:bg-[#6b1d1d] selection:text-[#faf5ea]">
+<body>
 
-  <!-- Encabezado Principal -->
-  <header class="py-12 px-4 text-center border-b-2 border-[#a67c37]/40">
-    <div class="max-w-4xl mx-auto">
-      <span class="text-xs uppercase tracking-[0.3em] text-[#a67c37] font-cinzel font-bold">Centro Histórico de Puebla</span>
-      <h1 class="font-cinzel text-3xl sm:text-5xl font-bold text-[#6b1d1d] mt-2 mb-3">Jardín de Santa Inés</h1>
-      <p class="text-base sm:text-lg text-[#5c4328] max-w-2xl mx-auto italic">
-        Un rincón de historia virreinal ubicado en la 3 Sur y 9 Poniente.
-      </p>
-    </div>
-  </header>
-
-  <!-- Sección del Video -->
-  <main class="py-12 px-4">
-    <div class="max-w-4xl mx-auto">
-      <div class="baroque-card p-4 sm:p-8 rounded-2xl">
-        <div class="text-center mb-6">
-          <span class="burgundy-ribbon px-4 py-1 rounded-full text-xs font-cinzel font-bold tracking-wider inline-block mb-2">Exposición Audiovisual</span>
-          <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-[#6b1d1d]">Conoce el Recorrido</h2>
+    <!-- FONDO DE RECORTES DE PERIÓDICO -->
+    <div class="newspaper-background">
+        <!-- Recorte 1 -->
+        <div class="clipping">
+            <h3>Edición Especial</h3>
+            <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=400&q=60" alt="Prensa">
+            <p>Los acontecimientos de la última semana han marcado un precedente histórico en la ciudad. Las crónicas locales reportan gran expectación entre los ciudadanos.</p>
         </div>
 
-        <!-- Contenedor del Video Adaptable (Responsive) -->
-        <div class="relative w-full overflow-hidden rounded-xl border-2 border-[#6b1d1d] shadow-lg bg-black" style="padding-top: 56.25%;">
-          <!-- 
-            INSTRUCCIÓN: Reemplaza el enlace de abajo con el de tu video (por ejemplo, el enlace embed de YouTube o un archivo .mp4 local).
-          -->
-          <iframe 
-            class="absolute top-0 left-0 w-full h-full"
-            src="https://www.youtube.com/embed/TU_VIDEO_ID" 
-            title="Video del Jardín de Santa Inés" 
-            frameborder="0" 
+        <!-- Recorte 2 -->
+        <div class="clipping">
+            <h3>Crónica Urbana</h3>
+            <p>En las calles del centro se respira un aire distinto. Los archivos del diario rescatan fotografías inéditas de décadas pasadas mientras la historia continúa escribiéndose día tras día en cada esquina.</p>
+        </div>
+
+        <!-- Recorte 3 -->
+        <div class="clipping">
+            <h3>Última Hora</h3>
+            <img src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=400&q=60" alt="Noticia">
+            <p>Fuentes oficiales confirmaron los detalles durante la rueda de prensa matutina.</p>
+        </div>
+
+        <!-- Recorte 4 -->
+        <div class="clipping">
+            <h3>Archivo Histórico</h3>
+            <p>Documentos encontrados en la hemeroteca revelan detalles fascinantes sobre la arquitectura y la cultura de la época, conservados intactos en papel prensa.</p>
+        </div>
+
+        <!-- Recorte 5 -->
+        <div class="clipping">
+            <h3>Suplemento Cultural</h3>
+            <p>El cine y la fotografía documental siguen siendo el reflejo más fiel de nuestra sociedad contemporánea.</p>
+        </div>
+
+        <!-- Recorte 6 -->
+        <div class="clipping">
+            <h3>Reportaje Gráfico</h3>
+            <img src="https://images.unsplash.com/photo-1523995462485-3d171b5c8fa9?auto=format&fit=crop&w=400&q=60" alt="Periódicos">
+            <p>La tinta sobre el papel continúa narrando las historias más relevantes.</p>
+        </div>
+
+        <!-- Recorte 7 -->
+        <div class="clipping">
+            <h3>Boletín Nocturno</h3>
+            <p>Resumen de noticias internacionales y locales recopiladas por nuestros corresponsales.</p>
+        </div>
+
+        <!-- Recorte 8 -->
+        <div class="clipping">
+            <h3>La Portada</h3>
+            <img src="https://images.unsplash.com/photo-1566378246598-5b11a0d486cc?auto=format&fit=crop&w=400&q=60" alt="Lectura">
+            <p>Un vistazo profundo a los titulares que definieron toda una generación.</p>
+        </div>
+    </div>
+
+    <!-- VIDEO CENTRADO EN MEDIO -->
+    <div class="video-wrapper">
+        <!-- OPCIÓN 1: Si tienes tu propio archivo .mp4, usa esta etiqueta: -->
+        <video controls autoplay muted loop>
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+            Tu navegador no soporta la reproducción de video.
+        </video>
+
+        <!-- OPCIÓN 2: Si prefieres insertar un video de YouTube, borra la etiqueta <video> de arriba y descomenta la de abajo: -->
+        <!--
+        <iframe 
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1" 
+            title="YouTube video player" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen>
-          ></iframe>
-        </div>
-
-        <div class="mt-6 text-center text-sm text-[#4a3728]">
-          <p>Disfruta de este material sobre la arquitectura y el valor cultural de este emblemático jardín poblano.</p>
-        </div>
-      </div>
+        </iframe>
+        -->
     </div>
-  </main>
-
-  <!-- Pie de página -->
-  <footer class="py-8 text-center border-t border-[#a67c37]/30 text-xs text-[#a67c37] font-cinzel tracking-widest">
-    Patrimonio Histórico de Puebla
-  </footer>
 
 </body>
 </html>
